@@ -1,238 +1,378 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Malla Interactiva - Psicología</title>
+  <meta charset="UTF-8" />
+  <title>Malla Interactiva - Lic. en Psicología (UBA)</title>
   <style>
     body {
       margin: 0;
       background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: sans-serif;
+      color: white;
     }
-    h1 {
+    .header {
+      background-color: #222;
+      padding: 20px;
       text-align: center;
-      padding: 1rem 0;
+    }
+    .header h1 {
+      margin: 0;
+      color: #9d5fff;
     }
     #starTotalCounter {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: #222;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 1.2rem;
+      font-size: 1.2em;
       color: gold;
-      font-weight: 700;
-      z-index: 1000;
-      box-shadow: 0 0 10px gold;
-    }
-    #resetBtn {
-      margin: 1rem auto 2rem auto;
-      display: block;
-      background-color: #bb2222;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 8px #bb2222;
-    }
-    #resetBtn:hover {
-      background-color: #dd4444;
+      margin-top: 5px;
     }
     .container {
       display: flex;
-      overflow-x: auto;
-      padding: 1rem;
-      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
     }
     .year {
-      flex: 0 0 auto;
-      width: 280px;
-      border: 1px solid #444;
+      background-color: #1c1c1c;
+      padding: 15px 20px;
       border-radius: 8px;
-      padding: 10px;
-      background-color: #222;
+      width: 280px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
     }
     .year h2 {
       text-align: center;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #555;
-      padding-bottom: 5px;
-      font-size: 1.3rem;
+      color: #00e0ff;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #444;
+      padding-bottom: 8px;
     }
-    .subject {
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin: 6px 0;
-      position: relative;
+    /* Materia título (con dependientes) */
+    .materia-titulo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 12px 0 6px 0;
+      border-left: 4px solid #9d5fff;
+      padding-left: 8px;
       cursor: pointer;
-      background-color: #eee;
-      color: #000;
-      font-weight: 600;
       user-select: none;
-      box-shadow: 0 0 4px rgba(255,255,255,0.1);
-      transition: background-color 0.2s, transform 0.2s;
+      background-color: #2a2a2a;
+      border-radius: 4px;
+      color: #d6b3ff;
+      transition: background-color 0.3s;
+      position: relative;
+    }
+    .materia-titulo:hover {
+      background-color: #3a2a5a;
+    }
+    .materia-titulo.approved {
+      background-color: #f8c5e3 !important;
+      color: #401533 !important;
+      border-left-color: #f77eb9 !important;
+    }
+
+    /* Materias hijas */
+    .subject {
+      background-color: #444; /* bloqueada por defecto */
+      padding: 8px 10px;
+      margin: 4px 0 4px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      position: relative;
+      user-select: none;
+      font-weight: 600;
+      color: #bbb;
     }
     .subject:hover {
-      transform: scale(1.03);
+      background-color: #555;
     }
+    /* Aprobada: rosa pastel */
     .subject.approved {
-      background-color: #28a745;
-      color: #fff;
-      font-weight: 700;
+      background-color: #f8c5e3 !important;
+      color: #401533 !important;
     }
+    /* Desbloqueada pero NO aprobada: gris claro */
+    .subject.unlocked {
+      background-color: #666;
+      color: #ddd;
+      cursor: pointer;
+    }
+    /* Bloqueada */
     .subject.locked {
-      background-color: #333;
-      color: #777;
+      background-color: #333 !important;
+      color: #777 !important;
       cursor: not-allowed;
     }
-    .subject.unlocked {
-      background-color: #888;
-      color: #fff;
+
+    .tooltip {
+      font-size: 0.75em;
+      color: #ccc;
+      margin-top: 3px;
+      margin-left: 20px;
+      font-style: italic;
+      user-select: none;
     }
-    .branch-group {
-      margin-top: 15px;
-      padding-top: 8px;
-      border-top: 1px solid #444;
+    .footer {
+      text-align: center;
+      margin: 20px 0 40px 0;
     }
-    .branch-title {
-      font-size: 1rem;
-      font-weight: bold;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      padding: 6px 10px;
-      background-color: #333;
-      border-radius: 6px;
-      color: #eee;
+    #resetBtn {
+      background-color: #ff1744;
+      color: white;
+      padding: 10px 25px;
+      border: none;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff1744;
+      transition: background-color 0.3s;
+    }
+    #resetBtn:hover {
+      background-color: #ff4569;
     }
   </style>
 </head>
 <body>
-  <h1>Malla Interactiva - Psicología</h1>
-  <div id="starTotalCounter">★ 0</div>
+  <div class="header">
+    <h1>Malla Interactiva - Lic. en Psicología (UBA)</h1>
+    <div id="starTotalCounter">★ 0</div>
+  </div>
   <div class="container" id="malla"></div>
-  <button id="resetBtn">Resetear Malla</button>
+  <div class="footer">
+    <button id="resetBtn">Reiniciar Malla</button>
+  </div>
+
   <script>
+    // Materias con correlativas, agrupadas en ciclos, y con dependientes (para títulos)
     const materias = [
-      {
-        columna: "CBC",
-        materias: ["Biología", "Semiología", "Psicología", "Pensamiento Científico", "Matemática", "Sociedad y Estado"]
-      },
-      {
-        columna: "Formación General",
-        materias: [
-          { titulo: "Psicología General" },
-          "Estadística|CBC",
-          { titulo: "Psicología Social" },
-          "Psicoanálisis: Freud|Psicología General",
-          "Psicología y Epistemología Genética|Psicología General",
-          "Neurofisiología|Psicología General",
-          "Historia de la Psicología|Psicología General",
-          "Metodología de la Investigación|Estadística",
-          "Salud Pública y Salud Mental|Psicología Social",
-          "Teoría y Técnica de Grupos|Psicología Social",
-          "Psicología Evolutiva: Niñez|Psicología y Epistemología Genética",
-          "Psicología Evolutiva: Adolescencia|Psicología Evolutiva: Niñez",
-          "Psicopatología|Psicoanálisis: Freud, Neurofisiología",
-          "Exploración y Diagnóstico I|Psicopatología, Psicología Evolutiva: Adolescencia",
-          "Exploración y Diagnóstico II|Exploración y Diagnóstico I"
-        ]
-      },
-      {
-        columna: "Formación Profesional",
-        materias: [
-          "Psicología, Ética y DDHH|Historia de la Psicología",
-          "Psicología Educacional|Exploración y Diagnóstico II",
-          "Psicología Institucional|Psicología Educacional",
-          "Psicología del Trabajo|Psicología Institucional",
-          "Clínica de Adultos|Psicopatología, Exploración y Diagnóstico II",
-          "Psicología Jurídica|Clínica de Adultos",
-          "Psicoterapias|Clínica de Adultos",
-          "Práctica Profesional e Investigación|Psicología Educacional, Clínica de Adultos"
-        ]
-      },
-      {
-        columna: "Electivas / Idiomas / Tesis",
-        materias: [
-          "Electiva I",
-          "Electiva II",
-          "Electiva Práctica",
-          "Requisito Idioma",
-          "Tesis|todas"
-        ]
-      }
+      // CBC (6 materias, sin correlativas)
+      { nombre: "Biología", codigo: "CBC1", ciclo: "CBC", correlativas: [] },
+      { nombre: "Semiología", codigo: "CBC2", ciclo: "CBC", correlativas: [] },
+      { nombre: "Psicología", codigo: "CBC3", ciclo: "CBC", correlativas: [] },
+      { nombre: "Pensamiento Científico", codigo: "CBC4", ciclo: "CBC", correlativas: [] },
+      { nombre: "Matemática", codigo: "CBC5", ciclo: "CBC", correlativas: [] },
+      { nombre: "Sociedad y Estado", codigo: "CBC6", ciclo: "CBC", correlativas: [] },
+
+      // Formación General
+      { nombre: "Psicología General", codigo: "FG1", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
+      { nombre: "Estadística", codigo: "FG2", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
+      { nombre: "Psicología Social", codigo: "FG3", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Psicoanálisis: Freud", codigo: "FG4", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Psicología y Epistemología Genética", codigo: "FG5", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Neurofisiología", codigo: "FG6", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Historia de la Psicología", codigo: "FG7", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Metodología de la Investigación", codigo: "FG8", ciclo: "Formación General", correlativas: ["FG2"] },
+      { nombre: "Salud Pública y Salud Mental", codigo: "FG9", ciclo: "Formación General", correlativas: ["FG3"] },
+      { nombre: "Teoría y Técnica de Grupos", codigo: "FG10", ciclo: "Formación General", correlativas: ["FG3"] },
+      { nombre: "Psicología Evolutiva: Niñez", codigo: "FG11", ciclo: "Formación General", correlativas: ["FG5"] },
+      { nombre: "Psicología Evolutiva: Adolescencia", codigo: "FG12", ciclo: "Formación General", correlativas: ["FG11"] },
+      { nombre: "Psicopatología", codigo: "FG13", ciclo: "Formación General", correlativas: ["FG4","FG6"] },
+      { nombre: "Exploración y Diagnóstico I", codigo: "FG14", ciclo: "Formación General", correlativas: ["FG13","FG12"] },
+      { nombre: "Exploración y Diagnóstico II", codigo: "FG15", ciclo: "Formación General", correlativas: ["FG14"] },
+
+      // Formación Profesional
+      { nombre: "Psicología, Ética y DDHH", codigo: "FP1", ciclo: "Formación Profesional", correlativas: ["FG7"] },
+      { nombre: "Psicología Educacional", codigo: "FP2", ciclo: "Formación Profesional", correlativas: ["FG15"] },
+      { nombre: "Psicología Institucional", codigo: "FP3", ciclo: "Formación Profesional", correlativas: ["FP2"] },
+      { nombre: "Psicología del Trabajo", codigo: "FP4", ciclo: "Formación Profesional", correlativas: ["FP3"] },
+      { nombre: "Clínica de Adultos", codigo: "FP5", ciclo: "Formación Profesional", correlativas: ["FG13","FG15"] },
+      { nombre: "Psicología Jurídica", codigo: "FP6", ciclo: "Formación Profesional", correlativas: ["FP5"] },
+      { nombre: "Psicoterapias", codigo: "FP7", ciclo: "Formación Profesional", correlativas: ["FP5"] },
+      { nombre: "Práctica Profesional e Investigación", codigo: "FP8", ciclo: "Formación Profesional", correlativas: ["FP2","FP5"] },
+
+      // Otros
+      { nombre: "Materia Electiva 1", codigo: "EL1", ciclo: "Otros", correlativas: [] },
+      { nombre: "Materia Electiva 2", codigo: "EL2", ciclo: "Otros", correlativas: [] },
+      { nombre: "Requisito de Idioma", codigo: "RI1", ciclo: "Otros", correlativas: [] },
+      { nombre: "Electiva / Práctica", codigo: "EL3", ciclo: "Otros", correlativas: [] },
+      { nombre: "Requisito de Tesis", codigo: "TESIS", ciclo: "Otros", correlativas: ["FP1","FP2","FP3","FP4","FP5","FP6","FP7","FP8"] },
     ];
 
-    const malla = document.getElementById("malla");
-    const counter = document.getElementById("starTotalCounter");
-    let aprobadas = JSON.parse(localStorage.getItem("aprobadasPsico")) || [];
+    const ciclos = ["CBC", "Formación General", "Formación Profesional", "Otros"];
 
-    function estaDesbloqueada(nombre, correlativas) {
-      if (!correlativas || correlativas === "") return true;
-      if (correlativas === "todas") {
-        return [...document.querySelectorAll('.subject')].every(el => el.classList.contains('approved') || el.classList.contains('locked') === false);
+    // Construyo un mapa de dependientes para mostrar "ramas"
+    const dependientesMap = {};
+    materias.forEach(m => {
+      if (m.correlativas) {
+        m.correlativas.forEach(cor => {
+          if (!dependientesMap[cor]) dependientesMap[cor] = [];
+          dependientesMap[cor].push(m.codigo);
+        });
       }
-      return correlativas.split(',').every(c => aprobadas.includes(c.trim()));
+    });
+
+    // Estado guardado en localStorage
+    let estado = {};
+
+    function guardarEstado() {
+      localStorage.setItem("estadoMallaPsico", JSON.stringify(estado));
     }
 
-    function actualizar() {
-      malla.innerHTML = "";
-      let totalAprobadas = 0;
+    function cargarEstado() {
+      const data = localStorage.getItem("estadoMallaPsico");
+      if (data) {
+        estado = JSON.parse(data);
+      } else {
+        estado = {};
+      }
+    }
 
-      materias.forEach(({ columna, materias }) => {
-        const colDiv = document.createElement("div");
-        colDiv.className = "year";
+    // Función para saber si una materia está desbloqueada
+    function desbloqueada(codigo) {
+      const mat = materias.find(m => m.codigo === codigo);
+      if (!mat.correlativas || mat.correlativas.length === 0) return true;
+      return mat.correlativas.every(cor => estado[cor]);
+    }
 
-        const h2 = document.createElement("h2");
-        h2.textContent = columna;
-        colDiv.appendChild(h2);
+    // Función para renderizar la malla
+    function renderMalla() {
+      const cont = document.getElementById("malla");
+      cont.innerHTML = "";
 
-        materias.forEach(m => {
-          if (typeof m === 'object' && m.titulo) {
-            const group = document.createElement("div");
-            group.className = "branch-title";
-            group.textContent = m.titulo;
-            colDiv.appendChild(group);
-          } else {
-            const [nombre, corrs] = typeof m === 'string' ? m.split('|') : [m, ""];
-            const div = document.createElement("div");
-            div.textContent = nombre;
-            div.className = "subject";
+      ciclos.forEach(ciclo => {
+        const col = document.createElement("div");
+        col.className = "year";
 
-            if (aprobadas.includes(nombre)) {
-              div.classList.add("approved");
-              totalAprobadas++;
-            } else if (estaDesbloqueada(nombre, corrs)) {
-              div.classList.add("unlocked");
-              div.addEventListener("click", () => {
-                aprobadas.push(nombre);
-                localStorage.setItem("aprobadasPsico", JSON.stringify(aprobadas));
-                actualizar();
+        const title = document.createElement("h2");
+        title.textContent = ciclo;
+        col.appendChild(title);
+
+        // Materias del ciclo que NO son dependientes (títulos o materias sin padre)
+        // Consideramos como títulos aquellas que tienen dependientes
+        const materiasCiclo = materias.filter(m => m.ciclo === ciclo);
+
+        // Primer muestro los títulos (materias con dependientes)
+        materiasCiclo.forEach(m => {
+          if (dependientesMap[m.codigo]) {
+            // Es título
+            const divTitulo = document.createElement("div");
+            divTitulo.className = "materia-titulo";
+            divTitulo.textContent = m.nombre;
+            divTitulo.dataset.codigo = m.codigo;
+
+            if (estado[m.codigo]) divTitulo.classList.add("approved");
+            else if (!desbloqueada(m.codigo)) divTitulo.classList.remove("approved");
+
+            divTitulo.title = m.correlativas && m.correlativas.length > 0
+              ? "Requiere: " + m.correlativas.map(c => {
+                  const matc = materias.find(mm => mm.codigo === c);
+                  return matc ? matc.nombre : c;
+                }).join(", ")
+              : "Sin correlativas";
+
+            divTitulo.addEventListener("click", () => {
+              if (!desbloqueada(m.codigo)) return; // bloqueado no clickeable
+              estado[m.codigo] = !estado[m.codigo];
+              // Si desaprueba el título, desapruebo dependientes automáticamente
+              if (!estado[m.codigo]) {
+                (dependientesMap[m.codigo] || []).forEach(dep => {
+                  estado[dep] = false;
+                });
+              }
+              guardarEstado();
+              renderMalla();
+            });
+
+            col.appendChild(divTitulo);
+
+            // Renderizo dependientes debajo como materias individuales
+            (dependientesMap[m.codigo] || []).forEach(depCodigo => {
+              const matDep = materias.find(md => md.codigo === depCodigo);
+              if (!matDep) return;
+
+              const divDep = document.createElement("div");
+              divDep.className = "subject";
+              divDep.textContent = matDep.nombre;
+              divDep.dataset.codigo = matDep.codigo;
+
+              if (estado[matDep.codigo]) {
+                divDep.classList.add("approved");
+              } else if (desbloqueada(matDep.codigo)) {
+                divDep.classList.add("unlocked");
+              } else {
+                divDep.classList.add("locked");
+              }
+
+              divDep.title = matDep.correlativas && matDep.correlativas.length > 0
+                ? "Requiere: " + matDep.correlativas.map(c => {
+                    const matc = materias.find(mm => mm.codigo === c);
+                    return matc ? matc.nombre : c;
+                  }).join(", ")
+                : "Sin correlativas";
+
+              divDep.addEventListener("click", () => {
+                if (divDep.classList.contains("locked")) return; // no clickeable si bloqueada
+                estado[matDep.codigo] = !estado[matDep.codigo];
+                guardarEstado();
+                renderMalla();
               });
-            } else {
-              div.classList.add("locked");
-            }
 
-            colDiv.appendChild(div);
+              col.appendChild(divDep);
+            });
+
           }
         });
 
-        malla.appendChild(colDiv);
+        // Luego muestro materias sin dependientes (ni títulos)
+        materiasCiclo.forEach(m => {
+          if (!dependientesMap[m.codigo]) {
+            // Evitar repetir las materias que ya aparecen como dependientes
+            // Si no están ya dibujadas como dependientes, las agrego
+            const yaExiste = col.querySelector(`[data-codigo='${m.codigo}']`);
+            if (!yaExiste) {
+              const div = document.createElement("div");
+              div.className = "subject";
+              div.textContent = m.nombre;
+              div.dataset.codigo = m.codigo;
+
+              if (estado[m.codigo]) {
+                div.classList.add("approved");
+              } else if (desbloqueada(m.codigo)) {
+                div.classList.add("unlocked");
+              } else {
+                div.classList.add("locked");
+              }
+
+              div.title = m.correlativas && m.correlativas.length > 0
+                ? "Requiere: " + m.correlativas.map(c => {
+                    const matc = materias.find(mm => mm.codigo === c);
+                    return matc ? matc.nombre : c;
+                  }).join(", ")
+                : "Sin correlativas";
+
+              div.addEventListener("click", () => {
+                if (div.classList.contains("locked")) return;
+                estado[m.codigo] = !estado[m.codigo];
+                guardarEstado();
+                renderMalla();
+              });
+
+              col.appendChild(div);
+            }
+          }
+        });
+
+        cont.appendChild(col);
       });
 
-      counter.textContent = `★ ${totalAprobadas}`;
+      actualizarContador();
+    }
+
+    function actualizarContador() {
+      const aprobadas = Object.values(estado).filter(v => v).length;
+      document.getElementById("starTotalCounter").textContent = `★ ${aprobadas} / ${materias.length}`;
     }
 
     document.getElementById("resetBtn").addEventListener("click", () => {
-      localStorage.removeItem("aprobadasPsico");
-      aprobadas = [];
-      actualizar();
+      estado = {};
+      guardarEstado();
+      renderMalla();
     });
 
-    actualizar();
+    // Inicio
+    cargarEstado();
+    renderMalla();
   </script>
 </body>
 </html>
