@@ -19,11 +19,6 @@
       margin: 0;
       color: #9d5fff;
     }
-    #starTotalCounter {
-      font-size: 1.2em;
-      color: gold;
-      margin-top: 5px;
-    }
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -136,7 +131,6 @@
 <body>
   <div class="header">
     <h1>Malla Interactiva - Lic. en Psicología (UBA)</h1>
-    <div id="starTotalCounter">★ 0</div>
   </div>
   <div class="container" id="malla"></div>
   <div class="footer">
@@ -144,7 +138,7 @@
   </div>
 
   <script>
-    // Materias con correlativas, agrupadas en ciclos, y con dependientes (para títulos)
+    // Materias y correlativas corregidas (Psicología General y Estadística requieren CBC aprobado)
     const materias = [
       // CBC (6 materias, sin correlativas)
       { nombre: "Biología", codigo: "CBC1", ciclo: "CBC", correlativas: [] },
@@ -155,6 +149,7 @@
       { nombre: "Sociedad y Estado", codigo: "CBC6", ciclo: "CBC", correlativas: [] },
 
       // Formación General
+      // Para Psicología General y Estadística la correlativa es aprobar todas las materias CBC
       { nombre: "Psicología General", codigo: "FG1", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
       { nombre: "Estadística", codigo: "FG2", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
       { nombre: "Psicología Social", codigo: "FG3", ciclo: "Formación General", correlativas: ["FG1"] },
@@ -191,7 +186,7 @@
 
     const ciclos = ["CBC", "Formación General", "Formación Profesional", "Otros"];
 
-    // Construyo un mapa de dependientes para mostrar "ramas"
+    // Mapa dependientes para las ramas
     const dependientesMap = {};
     materias.forEach(m => {
       if (m.correlativas) {
@@ -202,7 +197,6 @@
       }
     });
 
-    // Estado guardado en localStorage
     let estado = {};
 
     function guardarEstado() {
@@ -218,14 +212,12 @@
       }
     }
 
-    // Función para saber si una materia está desbloqueada
     function desbloqueada(codigo) {
       const mat = materias.find(m => m.codigo === codigo);
       if (!mat.correlativas || mat.correlativas.length === 0) return true;
       return mat.correlativas.every(cor => estado[cor]);
     }
 
-    // Función para renderizar la malla
     function renderMalla() {
       const cont = document.getElementById("malla");
       cont.innerHTML = "";
@@ -238,21 +230,18 @@
         title.textContent = ciclo;
         col.appendChild(title);
 
-        // Materias del ciclo que NO son dependientes (títulos o materias sin padre)
-        // Consideramos como títulos aquellas que tienen dependientes
         const materiasCiclo = materias.filter(m => m.ciclo === ciclo);
 
-        // Primer muestro los títulos (materias con dependientes)
+        // Títulos
         materiasCiclo.forEach(m => {
           if (dependientesMap[m.codigo]) {
-            // Es título
             const divTitulo = document.createElement("div");
             divTitulo.className = "materia-titulo";
             divTitulo.textContent = m.nombre;
             divTitulo.dataset.codigo = m.codigo;
 
             if (estado[m.codigo]) divTitulo.classList.add("approved");
-            else if (!desbloqueada(m.codigo)) divTitulo.classList.remove("approved");
+            else divTitulo.classList.remove("approved");
 
             divTitulo.title = m.correlativas && m.correlativas.length > 0
               ? "Requiere: " + m.correlativas.map(c => {
@@ -262,9 +251,8 @@
               : "Sin correlativas";
 
             divTitulo.addEventListener("click", () => {
-              if (!desbloqueada(m.codigo)) return; // bloqueado no clickeable
+              if (!desbloqueada(m.codigo)) return;
               estado[m.codigo] = !estado[m.codigo];
-              // Si desaprueba el título, desapruebo dependientes automáticamente
               if (!estado[m.codigo]) {
                 (dependientesMap[m.codigo] || []).forEach(dep => {
                   estado[dep] = false;
@@ -276,7 +264,7 @@
 
             col.appendChild(divTitulo);
 
-            // Renderizo dependientes debajo como materias individuales
+            // Dependientes
             (dependientesMap[m.codigo] || []).forEach(depCodigo => {
               const matDep = materias.find(md => md.codigo === depCodigo);
               if (!matDep) return;
@@ -302,7 +290,7 @@
                 : "Sin correlativas";
 
               divDep.addEventListener("click", () => {
-                if (divDep.classList.contains("locked")) return; // no clickeable si bloqueada
+                if (divDep.classList.contains("locked")) return;
                 estado[matDep.codigo] = !estado[matDep.codigo];
                 guardarEstado();
                 renderMalla();
@@ -310,15 +298,12 @@
 
               col.appendChild(divDep);
             });
-
           }
         });
 
-        // Luego muestro materias sin dependientes (ni títulos)
+        // Materias sin dependientes (ni títulos)
         materiasCiclo.forEach(m => {
           if (!dependientesMap[m.codigo]) {
-            // Evitar repetir las materias que ya aparecen como dependientes
-            // Si no están ya dibujadas como dependientes, las agrego
             const yaExiste = col.querySelector(`[data-codigo='${m.codigo}']`);
             if (!yaExiste) {
               const div = document.createElement("div");
@@ -355,13 +340,6 @@
 
         cont.appendChild(col);
       });
-
-      actualizarContador();
-    }
-
-    function actualizarContador() {
-      const aprobadas = Object.values(estado).filter(v => v).length;
-      document.getElementById("starTotalCounter").textContent = `★ ${aprobadas} / ${materias.length}`;
     }
 
     document.getElementById("resetBtn").addEventListener("click", () => {
@@ -370,7 +348,6 @@
       renderMalla();
     });
 
-    // Inicio
     cargarEstado();
     renderMalla();
   </script>
