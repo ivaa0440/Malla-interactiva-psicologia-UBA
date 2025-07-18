@@ -1,243 +1,175 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Malla Interactiva - Psicología (UNLaM)</title>
+  <meta charset="UTF-8">
+  <title>Malla Interactiva - Lic. en Psicología (UBA)</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #111;
-      color: white;
       font-family: sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 20px;
     }
-
-    h1 {
-      text-align: center;
-      margin: 1rem 0;
-      color: #fff;
-    }
-
-    .grid {
+    .container {
       display: flex;
+      gap: 20px;
+      flex-wrap: nowrap;
       overflow-x: auto;
-      padding: 1rem;
-      gap: 1rem;
-      justify-content: start;
     }
-
-    .column {
+    .columna {
       min-width: 250px;
-      background-color: #222;
-      padding: 1rem;
-      border-radius: 8px;
-      flex-shrink: 0;
     }
-
-    .column h2 {
-      color: #ccc;
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid #444;
+    h2 {
+      text-align: center;
     }
-
     .materia {
-      background-color: #444;
-      padding: 0.5rem;
-      margin: 0.3rem 0;
+      margin: 6px 0;
+      padding: 6px 10px;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      font-size: 15px;
     }
-
-    .materia:hover {
-      background-color: #666;
-    }
-
-    .materia.aprobada {
-      background-color: #3c6;
-      color: black;
-      font-weight: bold;
-    }
-
-    .materia.bloqueada {
+    .bloqueada {
       background-color: #333;
+      color: #999;
       cursor: not-allowed;
-      opacity: 0.5;
     }
-
-    .materia.desbloqueada {
+    .desbloqueada {
       background-color: #555;
-      cursor: pointer;
+      color: #ddd;
     }
-
-    .materia.titulo {
-      background-color: #0000;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #9cf;
-      cursor: default;
+    .aprobada {
+      background-color: #26a69a;
+      color: white;
     }
+    .cbc h2 { color: #e74c3c; }
+    .inicio h2 { color: #9b59b6; }
+    .general h2 { color: #2980b9; }
+    .profesional h2 { color: #1abc9c; }
+    .transversales h2 { color: #f39c12; }
 
-    .boton {
-      margin: 1rem auto;
-      display: block;
-      padding: 0.5rem 1rem;
-      background-color: #c33;
+    .boton-reset {
+      margin-top: 30px;
+      background-color: #c0392b;
       border: none;
       color: white;
-      font-weight: bold;
+      padding: 10px 20px;
+      font-size: 15px;
       border-radius: 5px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Malla Interactiva - Psicología (UNLaM)</h1>
 
-  <div class="grid" id="malla"></div>
+<div class="container">
+  <div class="columna cbc">
+    <h2>CBC</h2>
+    <div class="materia desbloqueada" data-codigo="biologia">Biología</div>
+    <div class="materia desbloqueada" data-codigo="semiologia">Semiología</div>
+    <div class="materia desbloqueada" data-codigo="psicologia">Psicología</div>
+    <div class="materia desbloqueada" data-codigo="pensamiento">Pensamiento Científico</div>
+    <div class="materia desbloqueada" data-codigo="matematica">Matemática</div>
+    <div class="materia desbloqueada" data-codigo="sociedad">Sociedad y Estado</div>
+  </div>
 
-  <button class="boton" onclick="resetMalla()">Reiniciar Malla</button>
+  <div class="columna inicio">
+    <h2>Inicio Formación Gral.</h2>
+    <div class="materia bloqueada" data-codigo="psigral" data-correlativas="biologia,semiologia,psicologia,pensamiento,matematica,sociedad">Psicología General</div>
+    <div class="materia bloqueada" data-codigo="estadistica" data-correlativas="biologia,semiologia,psicologia,pensamiento,matematica,sociedad">Estadística</div>
+  </div>
 
-  <script>
-    const materias = [
-      // CBC
-      { nombre: "Biología", id: "bio", columna: 0 },
-      { nombre: "Semiología", id: "semio", columna: 0 },
-      { nombre: "Psicología (CBC)", id: "psicocbc", columna: 0 },
-      { nombre: "Pensamiento Científico", id: "pc", columna: 0 },
-      { nombre: "Matemática", id: "mate", columna: 0 },
-      { nombre: "Sociedad y Estado", id: "syest", columna: 0 },
+  <div class="columna general">
+    <h2>Formación General</h2>
+    <div class="materia bloqueada" data-codigo="social" data-correlativas="psigral">Psicología Social</div>
+    <div class="materia bloqueada" data-codigo="freud" data-correlativas="psigral">Psicoanálisis: Freud</div>
+    <div class="materia bloqueada" data-codigo="epistemo" data-correlativas="psigral">Psicología y Epistemología Genética</div>
+    <div class="materia bloqueada" data-codigo="neuro" data-correlativas="psigral">Neurofisiología</div>
+    <div class="materia bloqueada" data-codigo="historia" data-correlativas="psigral">Historia de la Psicología</div>
+    <div class="materia bloqueada" data-codigo="metodo" data-correlativas="estadistica">Metodología de la Investigación</div>
+    <div class="materia bloqueada" data-codigo="salud" data-correlativas="social">Salud Pública y Salud Mental</div>
+    <div class="materia bloqueada" data-codigo="grupos" data-correlativas="social">Teoría y Técnica de Grupos</div>
+    <div class="materia bloqueada" data-codigo="evo1" data-correlativas="epistemo">Psicología Evolutiva: Niñez</div>
+    <div class="materia bloqueada" data-codigo="evo2" data-correlativas="evo1">Psicología Evolutiva: Adolescencia</div>
+    <div class="materia bloqueada" data-codigo="psicopato" data-correlativas="freud,neuro">Psicopatología</div>
+    <div class="materia bloqueada" data-codigo="modulo1" data-correlativas="psicopato,evo2">Exploración y Diagnóstico Psicológico I</div>
+    <div class="materia bloqueada" data-codigo="modulo2" data-correlativas="modulo1">Exploración y Diagnóstico Psicológico II</div>
+  </div>
 
-      // Formación General - Inicio
-      { nombre: "Psicología General", id: "psigral", columna: 1, requiere: ["bio", "semio", "psicocbc", "pc", "mate", "syest"] },
-      { nombre: "Estadística", id: "estad", columna: 1, requiere: ["bio", "semio", "psicocbc", "pc", "mate", "syest"] },
+  <div class="columna profesional">
+    <h2>Formación Profesional</h2>
+    <div class="materia bloqueada" data-codigo="etica" data-correlativas="historia">Psicología, Ética y Derechos Humanos</div>
+    <div class="materia bloqueada" data-codigo="educacional" data-correlativas="modulo2">Psicología Educacional</div>
+    <div class="materia bloqueada" data-codigo="institucional" data-correlativas="educacional">Psicología Institucional</div>
+    <div class="materia bloqueada" data-codigo="trabajo" data-correlativas="institucional">Psicología del Trabajo</div>
+    <div class="materia bloqueada" data-codigo="adultos" data-correlativas="psicopato,modulo2">Clínica de Adultos</div>
+    <div class="materia bloqueada" data-codigo="juridica" data-correlativas="adultos">Psicología Jurídica</div>
+    <div class="materia bloqueada" data-codigo="psicoterapias" data-correlativas="adultos">Psicoterapias</div>
+    <div class="materia bloqueada" data-codigo="practica" data-correlativas="educacional,adultos">Práctica Profesional e Investigación</div>
+  </div>
 
-      // Formación General continua
-      { nombre: "Psicología Social", id: "pssocial", columna: 2, requiere: ["psigral"] },
-      { nombre: "Psicoanálisis: Freud", id: "freud", columna: 2, requiere: ["psigral"] },
-      { nombre: "Psicología y Epistemología Genética", id: "epistemo", columna: 2, requiere: ["psigral"] },
-      { nombre: "Neurofisiología", id: "neuro", columna: 2, requiere: ["psigral"] },
-      { nombre: "Historia de la Psicología", id: "historia", columna: 2, requiere: ["psigral"] },
-      { nombre: "Metodología de la Investigación", id: "metodo", columna: 3, requiere: ["estad"] },
-      { nombre: "Salud Pública y Salud Mental", id: "salud", columna: 3, requiere: ["pssocial"] },
-      { nombre: "Teoría y Técnica de Grupos", id: "grupos", columna: 3, requiere: ["pssocial"] },
-      { nombre: "Psicología Evolutiva: Niñez", id: "ninez", columna: 3, requiere: ["epistemo"] },
-      { nombre: "Psicología Evolutiva: Adolescencia", id: "adole", columna: 4, requiere: ["ninez"] },
-      { nombre: "Psicopatología", id: "psicopato", columna: 4, requiere: ["freud", "neuro"] },
-      { nombre: "Exploración y Diagnóstico Psicológico I", id: "diag1", columna: 4, requiere: ["psicopato", "adole"] },
-      { nombre: "Exploración y Diagnóstico Psicológico II", id: "diag2", columna: 4, requiere: ["diag1"] },
+  <div class="columna transversales">
+    <h2>Transversales</h2>
+    <div class="materia desbloqueada" data-codigo="idioma">Requisito Idioma</div>
+    <div class="materia desbloqueada" data-codigo="electiva1">Materia Electiva I</div>
+    <div class="materia desbloqueada" data-codigo="electiva2">Materia Electiva II</div>
+    <div class="materia bloqueada" data-codigo="tesis" data-correlativas="etica,trabajo,psicoterapias,practica,electiva1,electiva2">Requisito Tesis</div>
+  </div>
+</div>
 
-      // Formación Profesional
-      { nombre: "Psicología, Ética y Derechos Humanos", id: "etica", columna: 5, requiere: ["historia"] },
-      { nombre: "Psicología Educacional", id: "educa", columna: 5, requiere: ["diag2"] },
-      { nombre: "Psicología Institucional", id: "institu", columna: 5, requiere: ["educa"] },
-      { nombre: "Psicología del Trabajo", id: "trabajo", columna: 5, requiere: ["institu"] },
-      { nombre: "Clínica de Adultos", id: "clinica", columna: 6, requiere: ["psicopato", "diag2"] },
-      { nombre: "Psicología Jurídica", id: "juridica", columna: 6, requiere: ["clinica"] },
-      { nombre: "Psicoterapias", id: "psicoterapias", columna: 6, requiere: ["clinica"] },
-      { nombre: "Práctica Profesional e Investigación", id: "practica", columna: 6, requiere: ["educa", "clinica"] },
+<button class="boton-reset" onclick="reiniciar()">Reiniciar Malla</button>
 
-      // Electivas y Requisitos
-      { nombre: "Materia Electiva (1)", id: "elect1", columna: 7 },
-      { nombre: "Materia Electiva (2)", id: "elect2", columna: 7 },
-      { nombre: "Materia Electiva / Práctica", id: "elect3", columna: 7 },
-      { nombre: "Requisito Idioma", id: "idioma", columna: 7 },
-      { nombre: "Requisito Tesis", id: "tesis", columna: 7, requiereTodas: true },
-    ];
+<script>
+const materias = document.querySelectorAll(".materia");
 
-    function crearMalla() {
-      const grid = document.getElementById("malla");
-      grid.innerHTML = "";
+function guardarEstado() {
+  const estado = {};
+  materias.forEach(m => {
+    estado[m.dataset.codigo] = m.classList.contains("aprobada");
+  });
+  localStorage.setItem("estadoMaterias", JSON.stringify(estado));
+}
 
-      const columnas = [];
-
-      materias.forEach(m => {
-        if (!columnas[m.columna]) {
-          const col = document.createElement("div");
-          col.className = "column";
-          col.innerHTML = `<h2>${columnaTitulo(m.columna)}</h2>`;
-          columnas[m.columna] = col;
-          grid.appendChild(col);
-        }
-
-        const div = document.createElement("div");
-        div.className = "materia";
-        div.textContent = m.nombre;
-        div.dataset.id = m.id;
-
-        m.elemento = div;
-        columnas[m.columna].appendChild(div);
-      });
-
-      actualizarMalla();
-
-      materias.forEach(m => {
-        if (m.requiere || m.requiereTodas || m.requiere === undefined) {
-          m.elemento.addEventListener("click", () => {
-            if (m.bloqueada) return;
-            m.aprobada = !m.aprobada;
-            guardarEstado();
-            actualizarMalla();
-          });
-        }
-      });
+function cargarEstado() {
+  const estado = JSON.parse(localStorage.getItem("estadoMaterias")) || {};
+  materias.forEach(m => {
+    if (estado[m.dataset.codigo]) {
+      m.classList.remove("bloqueada", "desbloqueada");
+      m.classList.add("aprobada");
     }
+  });
+}
 
-    function columnaTitulo(i) {
-      const titulos = [
-        "🟥 Ciclo Básico Común (CBC)",
-        "🟪 Inicio Formación General",
-        "🟪 Formación General",
-        "🟪 Formación General (Cont.)",
-        "🟪 Formación General (Final)",
-        "🟦 Formación Profesional",
-        "🟦 Profesional (Avanzado)",
-        "📘 Electivas y Requisitos",
-      ];
-      return titulos[i] || `Año ${i + 1}`;
-    }
+function actualizarEstados() {
+  materias.forEach(m => {
+    if (m.classList.contains("aprobada")) return;
+    const requisitos = (m.dataset.correlativas || "").split(",").filter(r => r);
+    const aprobadas = requisitos.every(r =>
+      document.querySelector(`[data-codigo="${r}"]`)?.classList.contains("aprobada")
+    );
+    m.classList.remove("bloqueada", "desbloqueada");
+    m.classList.add(aprobadas ? "desbloqueada" : "bloqueada");
+  });
+}
 
-    function actualizarMalla() {
-      materias.forEach(m => {
-        m.bloqueada = false;
-        if (m.requiere) {
-          m.bloqueada = !m.requiere.every(id => materias.find(x => x.id === id && x.aprobada));
-        }
-        if (m.requiereTodas) {
-          m.bloqueada = !materias.every(x => x.aprobada || x.id === m.id || x.columna === 7);
-        }
+materias.forEach(m => {
+  m.addEventListener("click", () => {
+    if (!m.classList.contains("desbloqueada") && !m.classList.contains("aprobada")) return;
+    m.classList.toggle("aprobada");
+    actualizarEstados();
+    guardarEstado();
+  });
+});
 
-        m.elemento.className = "materia";
-        if (m.requiere === undefined && !m.requiereTodas) {
-          m.elemento.classList.add("titulo");
-        } else if (m.aprobada) {
-          m.elemento.classList.add("aprobada");
-        } else if (m.bloqueada) {
-          m.elemento.classList.add("bloqueada");
-        } else {
-          m.elemento.classList.add("desbloqueada");
-        }
-      });
-    }
+function reiniciar() {
+  localStorage.removeItem("estadoMaterias");
+  location.reload();
+}
 
-    function guardarEstado() {
-      const estado = materias.map(m => m.aprobada ? 1 : 0);
-      localStorage.setItem("mallaPsico", JSON.stringify(estado));
-    }
+cargarEstado();
+actualizarEstados();
+</script>
 
-    function cargarEstado() {
-      const estado = JSON.parse(localStorage.getItem("mallaPsico") || "[]");
-      materias.forEach((m, i) => m.aprobada = estado[i]);
-    }
-
-    function resetMalla() {
-      localStorage.removeItem("mallaPsico");
-      location.reload();
-    }
-
-    cargarEstado();
-    crearMalla();
-  </script>
 </body>
 </html>
