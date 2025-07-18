@@ -2,274 +2,238 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Malla Interactiva - Psicología (UNLaM)</title>
+  <title>Malla Interactiva - Lic. en Psicología (UBA)</title>
   <style>
     body {
       margin: 0;
       background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: sans-serif;
+      color: white;
+    }
+    .header {
+      background-color: #222;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      color: #9d5fff;
+    }
+    #starTotalCounter {
+      font-size: 1.2em;
+      color: gold;
     }
     .container {
       display: flex;
-      overflow-x: auto;
-      padding: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 15px;
+      padding: 20px;
     }
     .year {
-      flex: 0 0 auto;
-      margin: 0 5px;
-      min-width: 220px;
-      border: 1px solid #444;
-      border-radius: 8px;
+      background-color: #1c1c1c;
       padding: 10px;
-      background-color: #222;
+      border-radius: 8px;
+      width: 260px;
+      flex-grow: 1;
     }
     .year h2 {
       text-align: center;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #555;
-      padding-bottom: 5px;
-      font-size: 1.3rem;
-    }
-    .term {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .term h3 {
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-      border-bottom: 1px solid #666;
-      padding-bottom: 3px;
-      text-align: center;
-      color: #bbb;
+      color: #00e0ff;
     }
     .subject {
-      padding: 8px 12px;
-      border-radius: 6px;
-      position: relative;
+      background-color: #333;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 5px;
       cursor: pointer;
-      transition: transform 0.15s;
-      box-shadow: 0 0 5px rgba(255,255,255,0.1);
-      background-color: #fff;
-      color: #000;
-      font-weight: 600;
-      user-select: none;
+      transition: all 0.3s;
+      position: relative;
     }
     .subject:hover {
-      transform: scale(1.05);
+      background-color: #444;
     }
     .subject.approved {
-      background-color: #28a745 !important;
-      color: #fff;
-      font-weight: 700;
+      background-color: #ff9ecb !important;
+      color: black;
     }
     .subject.locked {
-      background-color: #444 !important;
-      color: #888;
+      background-color: #444;
+      color: #999;
       cursor: not-allowed;
     }
-    .subject small {
-      display: block;
-      font-size: 0.75em;
-      opacity: 0.7;
-      margin-bottom: 3px;
-      font-family: monospace;
-    }
     .tooltip {
-      position: absolute;
-      bottom: 100%;
-      left: 0;
-      background: #444;
-      color: #fff;
-      padding: 5px;
-      border-radius: 4px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 0.75em;
-      pointer-events: none;
-      z-index: 10;
+      font-size: 0.8em;
+      color: #ccc;
+      margin-top: 4px;
     }
-    .subject:hover .tooltip {
-      opacity: 1;
-    }
-    .subject .star-counter {
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      font-size: 1rem;
-      color: gold;
-      user-select: none;
-      pointer-events: none;
-      font-weight: 900;
-      text-shadow: 0 0 3px black;
-      transition: opacity 0.3s;
-    }
-    #starTotalCounter {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: #222;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      color: gold;
-      font-weight: 700;
-      z-index: 1000;
-      user-select: none;
-      box-shadow: 0 0 10px gold;
+    .footer {
+      text-align: center;
+      margin: 20px 0;
     }
     #resetBtn {
-      margin: 1rem auto 2rem auto;
-      display: block;
-      background-color: #bb2222;
+      background-color: #ff1744;
       color: white;
-      border: none;
       padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
+      border: none;
+      font-size: 1em;
+      border-radius: 5px;
       cursor: pointer;
-      box-shadow: 0 0 8px #bb2222;
-      transition: background-color 0.3s;
     }
     #resetBtn:hover {
-      background-color: #dd4444;
+      background-color: #ff4569;
     }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center; padding: 1rem 0;">Malla Interactiva - Psicología (UNLaM)</h1>
-  <div id="starTotalCounter">★ 0 /  ... </div>
+  <div class="header">
+    <h1>Malla Interactiva - Lic. en Psicología (UBA)</h1>
+    <div id="starTotalCounter">★ 0</div>
+  </div>
   <div class="container" id="malla"></div>
-  <button id="resetBtn">Resetear Malla</button>
+  <div class="footer">
+    <button id="resetBtn">Reiniciar Malla</button>
+  </div>
 
   <script>
     const materias = [
-      // Año 0 - CBC
-      { codigo:'C01', nombre:'Biología', año:0, cuatrimestre:0, correlativas:[] },
-      { codigo:'C02', nombre:'Semiología', año:0, cuatrimestre:0, correlativas:[] },
-      { codigo:'C03', nombre:'Psicología', año:0, cuatrimestre:0, correlativas:[] },
-      { codigo:'C04', nombre:'Pensamiento Científico', año:0, cuatrimestre:0, correlativas:[] },
-      { codigo:'C05', nombre:'Matemática', año:0, cuatrimestre:0, correlativas:[] },
-      { codigo:'C06', nombre:'Sociedad y Estado', año:0, cuatrimestre:0, correlativas:[] },
+      { nombre: "Biología", codigo: "CBC1", ciclo: "CBC" },
+      { nombre: "Semiología", codigo: "CBC2", ciclo: "CBC" },
+      { nombre: "Psicología", codigo: "CBC3", ciclo: "CBC" },
+      { nombre: "Pensamiento Científico", codigo: "CBC4", ciclo: "CBC" },
+      { nombre: "Matemática", codigo: "CBC5", ciclo: "CBC" },
+      { nombre: "Sociedad y Estado", codigo: "CBC6", ciclo: "CBC" },
 
-      // Formación General - Año 1 Año 2 (usamos cuatrimestres ficticios)
-      { codigo:'G01', nombre:'Psicología General', año:1, cuatrimestre:1, correlativas:['C01','C02','C03','C04','C05','C06'] },
-      { codigo:'G02', nombre:'Estadística', año:1, cuatrimestre:1, correlativas:['C01','C02','C03','C04','C05','C06'] },
-      { codigo:'G03', nombre:'Psicología Social', año:1, cuatrimestre:2, correlativas:['G01'] },
-      { codigo:'G04', nombre:'Psicoanálisis: Freud', año:1, cuatrimestre:2, correlativas:['G01'] },
-      { codigo:'G05', nombre:'Psicología y Epistemología Genética', año:1, cuatrimestre:2, correlativas:['G01'] },
-      { codigo:'G06', nombre:'Neurofisiología', año:1, cuatrimestre:2, correlativas:['G01'] },
-      { codigo:'G07', nombre:'Historia de la Psicología', año:1, cuatrimestre:2, correlativas:['G01'] },
-      { codigo:'G08', nombre:'Metodología de la Investigación', año:2, cuatrimestre:1, correlativas:['G02'] },
-      { codigo:'G09', nombre:'Salud Pública y Salud Mental', año:2, cuatrimestre:1, correlativas:['G03'] },
-      { codigo:'G10', nombre:'Teoría y Técnica de Grupos', año:2, cuatrimestre:1, correlativas:['G03'] },
-      { codigo:'G11', nombre:'Psicología Evolutiva: Niñez', año:2, cuatrimestre:2, correlativas:['G05'] },
-      { codigo:'G12', nombre:'Psicología Evolutiva: Adolescencia', año:2, cuatrimestre:2, correlativas:['G11'] },
-      { codigo:'G13', nombre:'Psicopatología', año:2, cuatrimestre:2, correlativas:['G04','G06'] },
-      { codigo:'G14', nombre:'Teoría y Técnica Exploración y Diagnóstico I', año:2, cuatrimestre:2, correlativas:['G13','G12'] },
-      { codigo:'G15', nombre:'Teoría y Técnica Exploración y Diagnóstico II', año:2, cuatrimestre:2, correlativas:['G14'] },
+      { nombre: "Psicología General", codigo: "FG1", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
+      { nombre: "Estadística", codigo: "FG2", ciclo: "Formación General", correlativas: ["CBC1","CBC2","CBC3","CBC4","CBC5","CBC6"] },
+      { nombre: "Psicología Social", codigo: "FG3", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Psicoanálisis: Freud", codigo: "FG4", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Psicología y Epistemología Genética", codigo: "FG5", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Neurofisiología", codigo: "FG6", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Historia de la Psicología", codigo: "FG7", ciclo: "Formación General", correlativas: ["FG1"] },
+      { nombre: "Metodología de la Investigación", codigo: "FG8", ciclo: "Formación General", correlativas: ["FG2"] },
+      { nombre: "Salud Pública y Salud Mental", codigo: "FG9", ciclo: "Formación General", correlativas: ["FG3"] },
+      { nombre: "Teoría y Técnica de Grupos", codigo: "FG10", ciclo: "Formación General", correlativas: ["FG3"] },
+      { nombre: "Psicología Evolutiva: Niñez", codigo: "FG11", ciclo: "Formación General", correlativas: ["FG5"] },
+      { nombre: "Psicología Evolutiva: Adolescencia", codigo: "FG12", ciclo: "Formación General", correlativas: ["FG11"] },
+      { nombre: "Psicopatología", codigo: "FG13", ciclo: "Formación General", correlativas: ["FG4","FG6"] },
+      { nombre: "Exploración y Diagnóstico I", codigo: "FG14", ciclo: "Formación General", correlativas: ["FG13","FG12"] },
+      { nombre: "Exploración y Diagnóstico II", codigo: "FG15", ciclo: "Formación General", correlativas: ["FG14"] },
 
-      // Formación Profesional - Año 3 y 4
-      { codigo:'P01', nombre:'Psicología, Ética y DD.HH.', año:3, cuatrimestre:1, correlativas:['G07'] },
-      { codigo:'P02', nombre:'Psicología Educacional', año:3, cuatrimestre:1, correlativas:['G15'] },
-      { codigo:'P03', nombre:'Psicología Institucional', año:3, cuatrimestre:2, correlativas:['P02'] },
-      { codigo:'P04', nombre:'Psicología del Trabajo', año:3, cuatrimestre:2, correlativas:['P03'] },
-      { codigo:'P05', nombre:'Clínica de Adultos', año:4, cuatrimestre:1, correlativas:['G13','G15'] },
-      { codigo:'P06', nombre:'Psicología Jurídica', año:4, cuatrimestre:1, correlativas:['P05'] },
-      { codigo:'P07', nombre:'Psicoterapias', año:4, cuatrimestre:1, correlativas:['P05'] },
-      { codigo:'P08', nombre:'Práctica Profesional e Investigación', año:4, cuatrimestre:2, correlativas:['P02','P05'] },
+      { nombre: "Psicología, Ética y DDHH", codigo: "FP1", ciclo: "Formación Profesional", correlativas: ["FG7"] },
+      { nombre: "Psicología Educacional", codigo: "FP2", ciclo: "Formación Profesional", correlativas: ["FG15"] },
+      { nombre: "Psicología Institucional", codigo: "FP3", ciclo: "Formación Profesional", correlativas: ["FP2"] },
+      { nombre: "Psicología del Trabajo", codigo: "FP4", ciclo: "Formación Profesional", correlativas: ["FP3"] },
+      { nombre: "Clínica de Adultos", codigo: "FP5", ciclo: "Formación Profesional", correlativas: ["FG13","FG15"] },
+      { nombre: "Psicología Jurídica", codigo: "FP6", ciclo: "Formación Profesional", correlativas: ["FP5"] },
+      { nombre: "Psicoterapias", codigo: "FP7", ciclo: "Formación Profesional", correlativas: ["FP5"] },
+      { nombre: "Práctica Profesional e Investigación", codigo: "FP8", ciclo: "Formación Profesional", correlativas: ["FP2","FP5"] },
 
-      // Columna separada - Electivas e idioma
-      { codigo:'E01', nombre:'Electiva I', año:5, cuatrimestre:1, correlativas:[] },
-      { codigo:'E02', nombre:'Electiva II', año:5, cuatrimestre:1, correlativas:[] },
-      { codigo:'E03', nombre:'Electiva III', año:5, cuatrimestre:2, correlativas:[] },
-      { codigo:'E04', nombre:'Electiva / Práctica', año:5, cuatrimestre:2, correlativas:[] },
-      { codigo:'E05', nombre:'Idioma Obligatorio', año:5, cuatrimestre:0, correlativas:[] },
-      { codigo:'E06', nombre:'Requisito Tesis', año:5, cuatrimestre:0, correlativas:['E01','E02','E03','E04','P05','P08'] }
+      { nombre: "Materia Electiva 1", codigo: "EL1", ciclo: "Otros" },
+      { nombre: "Materia Electiva 2", codigo: "EL2", ciclo: "Otros" },
+      { nombre: "Requisito de Idioma", codigo: "RI1", ciclo: "Otros" },
+      { nombre: "Electiva / Práctica", codigo: "EL3", ciclo: "Otros" },
+      { nombre: "Requisito de Tesis", codigo: "TESIS", ciclo: "Otros", correlativas: ["FP1","FP2","FP3","FP4","FP5","FP6","FP7","FP8"] },
     ];
 
-    const estado = JSON.parse(localStorage.getItem("estadoMaterias") || '{}');
-    const malla = document.getElementById('malla');
-    const contadorEstrellas = document.getElementById('starTotalCounter');
-    const resetBtn = document.getElementById('resetBtn');
+    const ciclos = ["CBC", "Formación General", "Formación Profesional", "Otros"];
 
-    function crearColumna(año, label) {
-      const col = document.createElement('div');
-      col.className = 'year';
-      col.innerHTML = `<h2>${label}</h2>`;
-      const cuatros = (año===0||año===5) ? [0,1,2] : [1,2];
-      cuatros.forEach(c => {
-        const term = document.createElement('div');
-        term.className = 'term';
-        const title = año===0 ? 'CBC'
-                      : año===5 ? (c===0 ? 'Idioma / Tesis' : 'Electivas')
-                      : (c===1 ? '1er Cuatrimestre' : '2do Cuatrimestre');
-        term.innerHTML = `<h3>${title}</h3>`;
-        materias.filter(m=>m.año===año && m.cuatrimestre===c)
-                .forEach(materia => {
-          const s = document.createElement('div');
-          s.className='subject';
-          if (estado[materia.codigo]) s.classList.add('approved');
-          else if (!materia.correlativas.every(cod=>estado[cod])) s.classList.add('locked');
-          s.setAttribute('data-codigo', materia.codigo);
-          const star = estado[materia.codigo]?'':`<span class="star-counter">★</span>`;
-          s.innerHTML = `<small>${materia.codigo}</small>${materia.nombre}${star}`;
-          const tooltip = document.createElement('div');
-          tooltip.className='tooltip';
-          tooltip.textContent = materia.correlativas.length>0 ? 'Correlativas: '+materia.correlativas.join(', ') : 'Sin correlativas';
-          s.appendChild(tooltip);
-          s.addEventListener('click', ()=>{
-            if (s.classList.contains('locked')) return;
-            estado[materia.codigo] = !estado[materia.codigo];
-            localStorage.setItem("estadoMaterias",JSON.stringify(estado));
-            actualizarEstado();
-          });
-          term.appendChild(s);
+    function renderMalla() {
+      const cont = document.getElementById("malla");
+      cont.innerHTML = "";
+      ciclos.forEach(ciclo => {
+        const col = document.createElement("div");
+        col.className = "year";
+        const title = document.createElement("h2");
+        title.textContent = ciclo;
+        col.appendChild(title);
+
+        const materiasCiclo = materias.filter(m => m.ciclo === ciclo);
+        materiasCiclo.forEach(m => {
+          const div = document.createElement("div");
+          div.className = "subject";
+          div.dataset.codigo = m.codigo;
+          div.textContent = m.nombre;
+
+          if (m.correlativas) {
+            const tip = document.createElement("div");
+            tip.className = "tooltip";
+            tip.textContent = "Requiere: " + m.correlativas.map(c => {
+              const mat = materias.find(mm => mm.codigo === c);
+              return mat ? mat.nombre : c;
+            }).join(", ");
+            div.appendChild(tip);
+          }
+
+          div.addEventListener("click", () => toggleMateria(div));
+          col.appendChild(div);
         });
-        col.appendChild(term);
+        cont.appendChild(col);
       });
-      return col;
+      actualizarBloqueos();
+      contarAprobadas();
     }
 
-    function actualizarEstado(){
-      let aprobadas=0;
-      document.querySelectorAll('.subject').forEach(div=>{
-        const cod=div.getAttribute('data-codigo');
-        const mat=materias.find(m=>m.codigo===cod);
-        if(estado[cod]){
-          div.classList.add('approved'); div.classList.remove('locked');
+    function toggleMateria(el) {
+      if (el.classList.contains("locked")) return;
+      el.classList.toggle("approved");
+      actualizarBloqueos();
+      contarAprobadas();
+      guardarEstado();
+    }
+
+    function actualizarBloqueos() {
+      document.querySelectorAll(".subject").forEach(el => {
+        const codigo = el.dataset.codigo;
+        const mat = materias.find(m => m.codigo === codigo);
+        if (!mat.correlativas || mat.correlativas.length === 0) {
+          el.classList.remove("locked");
         } else {
-          if(mat.correlativas.every(c=>estado[c])) div.classList.remove('locked');
-          else div.classList.add('locked');
+          const aprobadas = [...document.querySelectorAll(".subject.approved")].map(x => x.dataset.codigo);
+          const puede = mat.correlativas.every(c => aprobadas.includes(c));
+          if (!el.classList.contains("approved")) {
+            if (puede) {
+              el.classList.remove("locked");
+            } else {
+              el.classList.add("locked");
+            }
+          }
         }
-        div.querySelectorAll('.star-counter').forEach(star=>star.style.opacity = estado[cod]? '0':'1');
-        if(estado[cod]) aprobadas++;
       });
-      contadorEstrellas.textContent = `★ ${aprobadas} / ${materias.length}`;
     }
 
-    function inicializar(){
-      malla.innerHTML='';
-      malla.appendChild(crearColumna(0,'CBC'));
-      malla.appendChild(crearColumna(1,'Formación General 1'));
-      malla.appendChild(crearColumna(2,'Formación General 2'));
-      malla.appendChild(crearColumna(3,'Formación Profesional 1'));
-      malla.appendChild(crearColumna(4,'Formación Profesional 2'));
-      malla.appendChild(crearColumna(5,'Electivas e Idioma/Tesis'));
-      actualizarEstado();
+    function contarAprobadas() {
+      const total = document.querySelectorAll(".subject.approved").length;
+      document.getElementById("starTotalCounter").textContent = `★ ${total}`;
     }
 
-    resetBtn.addEventListener('click',()=>{
-      localStorage.removeItem("estadoMaterias");
-      for(const codigo in estado) estado[codigo]=false;
-      inicializar();
+    function guardarEstado() {
+      const estado = [...document.querySelectorAll(".subject")].map(el => ({
+        codigo: el.dataset.codigo,
+        aprobado: el.classList.contains("approved")
+      }));
+      localStorage.setItem("estadoMallaPsico", JSON.stringify(estado));
+    }
+
+    function cargarEstado() {
+      const data = localStorage.getItem("estadoMallaPsico");
+      if (!data) return;
+      const estado = JSON.parse(data);
+      estado.forEach(est => {
+        const el = document.querySelector(`.subject[data-codigo='${est.codigo}']`);
+        if (el && est.aprobado) el.classList.add("approved");
+      });
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      localStorage.removeItem("estadoMallaPsico");
+      renderMalla();
     });
 
-    inicializar();
+    renderMalla();
+    cargarEstado();
+    actualizarBloqueos();
+    contarAprobadas();
   </script>
 </body>
 </html>
